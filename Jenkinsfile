@@ -1,11 +1,11 @@
 node {
-    stage('Build') {
-        checkout scm
+  stage('SCM') {
+    checkout scm
+  }
+  stage('SonarQube Analysis') {
+    def mvn = tool 'mvn1';
+    withSonarQubeEnv() {
+      sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=project-xiomara"
     }
-    stage ('SonarQube Analysis') {
-        scannerHome = tool 'sonarqube-xio';
-        withSonarQubeEnv() {
-            sh "${scannerHome}/bin/sonar-scanner"
-        }
-    }
+  }
 }
