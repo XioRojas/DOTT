@@ -1,11 +1,36 @@
-node {
-  stage('SCM') {
-    checkout scm
-  }
-  stage('SonarQube Analysis') {
-    def scannerHome = tool 'sonarqube-xio';
-    withSonarQubeEnv() {
-      sh "${scannerHome}/bin/sonar-scanner"
+pipeline {
+    agent any
+    triggers {
+        pollSCM('* * * * *')
     }
-  }
+    stages {
+        stage("Compile") {
+            steps {
+                sh "./gradlew compileJava"
+            }
+        }
+        stage("Unit test") {
+            steps {
+                sh "./gradlew test"
+            }
+        }
+        stage("Code coverage") {
+            steps {
+        	    sh "./gradlew jacocoTestReport"
+        	 	publishHTML (target: [
+         	        reportDir: 'build/reports/jacoco/test/html',
+         			reportFiles: 'index.html',
+         			reportName: 'JacocoReport'
+         	    ])
+         		sh "./gradlew jacocoTestCoverageVerification"
+         	}
+        }
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube-xio') {
+                    sh './gradlew sonarqube'
+                }
+            }
+        }
+    }
 }
