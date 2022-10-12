@@ -1,31 +1,32 @@
-pipeline {
-    agent any
+node {
+    def mvnHome
+    def scannerHome
+    stage('Preparation') { 
+        
+        git 'https://github.com/XioRojas/DOTT.git'
 
-    tools {
-        maven "mvn1"
+        mvnHome = tool 'mvn1'
+    }
+    
+    stage('Build') {
+        withEnv(["MVN_HOME=$mvnHome"]) {
+            if (isUnix()) {
+                sh '"$MVN_HOME/bin/mvn" -Dmaven.test.failure.ignore clean package'
+            } else {
+                bat(/"%MVN_HOME%\bin\mvn" -Dmaven.test.failure.ignore clean package/)
+            }
+        }
+    }
+    
+    stage('Results') {
+        junit '**/target/surefire-reports/TEST-*.xml'
+        archiveArtifacts 'target/*.jar'
     }
 
-    stages {
-        stage ('Build') {
-            steps {
-                git "https://github.com/XioRojas/DOTT.git"
-
-                sh "mvn -Dmaven.test.failure.ignore=true clean package"
-            }
+    stage ('SonarQube Analysis') {
+        scannerHome = tool 'sonarqube-xio';
+        withSonarQubeEnv() {
+            sh "${scannerHome}/bin/sonar-scanner"
         }
-
-        post {
-            success {
-                junit '**/target/surefire-reports/TEST-*.xml'
-                archiveArtifacts 'target/*.jar'
-            }
-        }
-
-        stage ('SonarQube Analysis') {
-             def scannerHome = tool 'sonarqube-xio';
-             withSonarQubeEnv() {
-                sh "${scannerHome}/bin/sonar-scanner"
-             }
-        }  
     }
 }
