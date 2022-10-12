@@ -8,4 +8,12 @@ node {
       sh "${scannerHome}/bin/sonar-scanner"
     }
   }
+  
+  tools {maven "mvn1"}
+  
+  stage('Example') {
+    steps {
+        sh 'mvn config ls'
+      }
+    }
 }
