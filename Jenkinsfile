@@ -9,11 +9,8 @@ node {
     }
   }
   
-  tools {maven "mvn1"}
-  
   stage('Example') {
-    steps {
-        sh 'mvn config ls'
-      }
+    def maven = tool 'mvn1'
+    sh 'mvn config ls'
     }
 }
