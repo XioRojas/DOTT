@@ -1,15 +1,28 @@
 node {
     stage ('SCM'){
         checkout scm
+        checkout ($class: 'GitSCM', branches :[name: '*master'], userRemoteConfigs: ['https://github.com/XioRojas/DOTT.git'])
     }
     
-    stage('Build') {
-        git 'https://github.com/XioRojas/DOTT.git'
-
+    stage('Test') {
         def mvnHome = tool 'mvn1'
         withMaven(){
-            sh "${mvnHome}/bin/mvn clean install"
-            sh "${mvnHome}/bin/mvn clean compile test"
+            sh "${mvnHome}/bin/mvn --batch-mode -Dmaven.test.failure.ignore=true test"
+        }
+    }
+
+        stage('Package') {
+        def mvnHome = tool 'mvn1'
+        withMaven(){
+            sh "${mvnHome}/bin/mvn --batch-mode package -DskipsTest"
+        }
+    }
+    
+    
+    post {
+        always {
+            archiveArtifacts artifacts: "build/libs/**/*.jar", fingerprint: true
+            junit "build/reports/**/*.xml", allowEmptyResults: true
         }
     }
 
