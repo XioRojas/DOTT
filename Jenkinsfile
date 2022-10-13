@@ -25,4 +25,8 @@ node {
             sh "${scannerHome}/bin/sonar-scanner"
         }
     }
+    
+    stage('Deploy') {
+        sh "./jenkins/scripts/deliver.sh"
+    }
 }
