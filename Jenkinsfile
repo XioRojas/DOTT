@@ -8,16 +8,16 @@ node {
 
         def mvnHome = tool 'mvn1'
         withMaven(){
-            sh 'mvn clean install'
-            sh 'mvn clean compile test'
+            sh "${mvnHome}/bin/mvn clean install"
+            sh "${mvnHome}/bin/mvn clean compile test"
         }
     }
     
     
     post {
         always {
-            archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
-            junit 'build/reports/**/*.xml'
+            archiveArtifacts artifacts: "build/libs/**/*.jar", fingerprint: true
+            junit "build/reports/**/*.xml"
         }
     }
 
@@ -30,6 +30,6 @@ node {
     
     stage('Example') {
         def maven = tool 'mvn1'
-        sh 'mvn config ls'
+        sh "${mvnHome}/bin/mvn config ls"
     }
 }
