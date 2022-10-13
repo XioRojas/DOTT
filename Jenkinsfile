@@ -1,10 +1,11 @@
 node {
     stage ('SCM'){
         checkout scm
-        checkout ($class: 'GitSCM', branches :[name: '*master'], userRemoteConfigs: ['https://github.com/XioRojas/DOTT.git'])
     }
     
     stage('Test') {
+        git 'https://github.com/XioRojas/DOTT.git'
+        
         def mvnHome = tool 'mvn1'
         withMaven(){
             sh "${mvnHome}/bin/mvn --batch-mode -Dmaven.test.failure.ignore=true test"
