@@ -5,7 +5,6 @@ node {
     
     stage('Test') {
         def mvnHome = tool 'mvn1'
-        sh 'mvn install'
         sh 'mvn clean compile test'
     }
     
