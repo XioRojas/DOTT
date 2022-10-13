@@ -1,18 +1,21 @@
-pipeline {
-    agent any
-    
-    tools {
-        maven "mvn1"
-        scannerHome 'sonarqube-xio'
+node {
+    stage ('SCM'){
+        checkout scm
     }
     
-    stages {
-        stage('Build') {
-            steps{
-                git "https://github.com/XioRojas/DOTT.git"
-                sh "mvn -Dmaven.test.failure.ignore=true clean package"
-            }
+    stage('Build') {
+        sh './gradlew build'
+    }
+    
+    stage('SonarQube Analysis') {
+        def scannerHome = tool 'sonarqube-xio';
+        withSonarQubeEnv() {
+            sh "${scannerHome}/bin/sonar-scanner"
         }
+    }
+    
+    stage('Test') {
+        sh './gradlew check'
     }
     
     post {
@@ -21,10 +24,9 @@ pipeline {
             junit 'build/reports/**/*.xml'
         }
     }
-
-  stage('SonarQube Analysis') {
-    withSonarQubeEnv() {
-      sh "${scannerHome}/bin/sonar-scanner"
+    
+    stage('Example') {
+        def maven = tool 'mvn1'
+        sh 'mvn config ls'
     }
-  }
 }
