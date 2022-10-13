@@ -3,10 +3,16 @@ node {
         checkout scm
     }
     
-    stage('Test') {
+    stage('Build') {
+        git 'https://github.com/XioRojas/DOTT.git'
+
         def mvnHome = tool 'mvn1'
-        sh 'mvn clean compile test'
+        withMaven(){
+            sh 'mvn clean install'
+            sh 'mvn clean compile test'
+        }
     }
+    
     
     post {
         always {
@@ -14,7 +20,7 @@ node {
             junit 'build/reports/**/*.xml'
         }
     }
-    
+
     stage('SonarQube Analysis') {
         def scannerHome = tool 'sonarqube-xio';
         withSonarQubeEnv() {
@@ -22,8 +28,8 @@ node {
         }
     }
     
-    
     stage('Example') {
+        def maven = tool 'mvn1'
         sh 'mvn config ls'
     }
 }
