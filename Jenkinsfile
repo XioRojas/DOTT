@@ -18,14 +18,6 @@ node {
             sh "${mvnHome}/bin/mvn --batch-mode package -DskipsTest"
         }
     }
-    
-    
-    post {
-        always {
-            archiveArtifacts artifacts: "build/libs/**/*.jar", fingerprint: true
-            junit "build/reports/**/*.xml", allowEmptyResults: true
-        }
-    }
 
     stage('SonarQube Analysis') {
         def scannerHome = tool 'sonarqube-xio';
