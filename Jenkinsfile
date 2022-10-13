@@ -3,10 +3,6 @@ node {
         checkout scm
     }
     
-    stage('Build') {
-        sh './gradlew build'
-    }
-    
     stage('SonarQube Analysis') {
         def scannerHome = tool 'sonarqube-xio';
         withSonarQubeEnv() {
@@ -15,7 +11,7 @@ node {
     }
     
     stage('Test') {
-        sh './gradlew check'
+        sh 'mvn clean compile test'
     }
     
     post {
@@ -26,7 +22,6 @@ node {
     }
     
     stage('Example') {
-        def maven = tool 'mvn1'
         sh 'mvn config ls'
     }
 }
