@@ -25,9 +25,3 @@ node {
             sh "${scannerHome}/bin/sonar-scanner"
         }
     }
-    
-    stage('Example') {
-        def maven = tool 'mvn1'
-        sh "${mvnHome}/bin/mvn config ls"
-    }
-}
