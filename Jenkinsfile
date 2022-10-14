@@ -33,11 +33,4 @@ node {
             sh "${mvnHome}/bin/mvn --batch-mode package -DskipsTest"
         }
     }
-
-    stage('Deploy') {
-        def mvnHome = tool 'mvn1'
-        withMaven(){
-            sh "${mvnHome}/bin/mvn --batch-mode deploy"
-        }
-    }
 }
