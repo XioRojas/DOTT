@@ -19,7 +19,7 @@ node {
             sh "${scannerHome}/bin/sonar-scanner"
         }
     }
-    stage('Test') {
+    stage('UTest') {
         def mvnHome = tool 'mvn1'
         withMaven(){
              sh "${mvnHome}/bin/mvn --batch-mode test"
