@@ -3,7 +3,7 @@ node {
         checkout scm
     }
     
-    stage('Build') {
+    stage('Build1') {
         git 'https://github.com/XioRojas/DOTT.git'
 
         def mvnHome = tool 'mvn1'
